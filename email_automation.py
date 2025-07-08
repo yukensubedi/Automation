@@ -43,8 +43,9 @@ def send_birthday_emails(students):
     for student in students:
         try:
             birthdate = datetime.strptime(student['birthdate'], '%Y-%m-%d').strftime('%m-%d')
+            print(birthdate)
         except Exception as e:
-            logging.error(f"⚠️ Invalid birthdate format for {student}: {e}")
+            logging.info(f"⚠️ Invalid birthdate format for {student}: {e}")
             continue
 
         if birthdate == today:
@@ -150,8 +151,11 @@ def send_birthday_emails(students):
                 with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
                     smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
                     smtp.send_message(msg)
+                    print('message send')
                 logging.info(f"✅ Email sent to {student['name']} at {student['email']}")
+                print('email sent')
             except Exception as e:
+                print(e)
                 logging.error(f"❌ Failed to send email to {student['email']}: {e}")
         else:
             logging.debug(f"📅 Not {student['name']}'s birthday today.")
@@ -191,7 +195,7 @@ def get_students_from_sheet():
 
 
 
-schedule.every().day.at("13:51").do(lambda: send_birthday_emails(get_students_from_sheet()))
+schedule.every().day.at("14:02").do(lambda: send_birthday_emails(get_students_from_sheet()))
 print("Scheduler Running")
 
 logging.info("📬 Birthday email scheduler started...")
