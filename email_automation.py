@@ -195,7 +195,7 @@ def get_students_from_sheet():
 
 
 
-schedule.every().day.at("14:20").do(lambda: send_birthday_emails(get_students_from_sheet()))
+schedule.every().day.at("14:22").do(lambda: send_birthday_emails(get_students_from_sheet()))
 print("Scheduler Running")
 
 logging.info("📬 Birthday email scheduler started...")
