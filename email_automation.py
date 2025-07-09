@@ -50,7 +50,7 @@ def send_birthday_emails(students):
 
         if birthdate == today:
             msg = EmailMessage()
-            msg['Subject'] = "🎉 Happy Birthday!"
+            msg['Subject'] = f"🎉 Happy Birthday!"
             msg['From'] = EMAIL_ADDRESS
             msg['To'] = student['email']
 
@@ -58,7 +58,7 @@ def send_birthday_emails(students):
             msg.set_content(f"Hi {student['name']},\n\nWishing you a fantastic birthday!")
             # HTML version
             msg.add_alternative(f"""
-     <html>
+    <html>
   <body style="margin:0; padding:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color:#f4f4f4;">
     <table width="100%" bgcolor="#f4f4f4" cellpadding="0" cellspacing="0" border="0">
       <tr>
@@ -82,7 +82,7 @@ def send_birthday_emails(students):
               <td style="padding: 50px 50px 0 50px; color: #333333; font-size: 17px; line-height: 1.7; text-align: center;">
                 <h2 style="margin: 0; font-size: 28px; color: #222;">🎉 Happy Birthday {student['name']} !! 🎉</h2>
                 <p style="margin: 12px 0 0 0; font-size: 16px; color: #666;">
-                  We're so glad to have you as part of the Stanford family.
+                  We're glad to be part of your journey in Australia. 
                 </p>
               </td>
             </tr>
@@ -100,6 +100,17 @@ def send_birthday_emails(students):
                 </p>
               </td>
             </tr>
+            
+            <!-- PR Pathway Short Note -->
+            <tr>
+              <td style="padding: 0 50px 30px 50px; color: #333; font-size: 15px; line-height: 1.6; text-align: center;">
+                <p style="margin: 0;">
+                  🎓 Chasing your Down Under dream? <br/>
+                  <span style="font-style:italic">Find out how your studies can open doors to exciting future opportunities in Australia.</span>
+                </p>
+              </td>
+            </tr>
+
 
             <!-- Footer -->
             <tr>
@@ -148,7 +159,8 @@ def send_birthday_emails(students):
 """, subtype='html')
 
             try:
-                with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+                with smtplib.SMTP('smtp.office365.com', 587) as smtp:
+                    smtp.starttls()  # Secure the connection
                     smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
                     smtp.send_message(msg)
                     print('message send')
@@ -191,11 +203,12 @@ def get_students_from_sheet():
             logging.info(f"Skipping row due to missing data: {row}")
 
     logging.info(f"Total students with birthday today: {len(students)}")
+    print(students)
     return students
 
 
 
-schedule.every().day.at("14:22").do(lambda: send_birthday_emails(get_students_from_sheet()))
+schedule.every().day.at("11:49").do(lambda: send_birthday_emails(get_students_from_sheet()))
 print("Scheduler Running")
 
 logging.info("📬 Birthday email scheduler started...")
