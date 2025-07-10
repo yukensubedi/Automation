@@ -51,7 +51,7 @@ def send_birthday_emails(students):
         if birthdate == today:
             msg = EmailMessage()
             msg['Subject'] = f"🎉 Happy Birthday!"
-            msg['From'] = EMAIL_ADDRESS
+            msg['From'] = 'Stanford International <studentsupport@stanfordinternational.com.au>'
             msg['To'] = student['email']
 
             # Plain text fallback
@@ -208,7 +208,7 @@ def get_students_from_sheet():
 
 
 
-schedule.every().day.at("16:17").do(lambda: send_birthday_emails(get_students_from_sheet()))
+schedule.every().day.at("10:30").do(lambda: send_birthday_emails(get_students_from_sheet()))
 print("Scheduler Running")
 
 logging.info("📬 Birthday email scheduler started...")
