@@ -42,7 +42,8 @@ def send_birthday_emails(students):
 
     for student in students:
         try:
-            birthdate = datetime.strptime(student['birthdate'], '%Y-%m-%d').strftime('%m-%d')
+            # Parse the new DOB format (dd/mm/yyyy)
+            birthdate = datetime.strptime(student['birthdate'], '%d/%m/%Y').strftime('%m-%d')
             print(birthdate)
         except Exception as e:
             logging.info(f"⚠️ Invalid birthdate format for {student}: {e}")
@@ -96,7 +97,7 @@ def send_birthday_emails(students):
                 </p>
                 <p style="margin-top: 40px; font-style: italic; color: #666;">
                   With warm wishes,<br />
-                  The Stanford International Team
+                  Team Stanford
                 </p>
               </td>
             </tr>
@@ -181,24 +182,26 @@ def get_students_from_sheet():
     today_str = today.strftime("%m-%d")
 
     for row in records:
-        # Normalize keys
+        # Normalize keys to lowercase and strip spaces
         row = {k.strip().lower(): v for k, v in row.items()} 
 
-        birthdate = row.get("birthdate")
-        if row.get("name") and row.get("email") and birthdate:
+        dob = row.get("dob")  # new column name
+        client_name = row.get("client name")  # new column name
+
+        if client_name and row.get("email") and dob:
             try:
-                bd_date = datetime.strptime(birthdate.strip(), "%Y-%m-%d")
+                bd_date = datetime.strptime(dob.strip(), "%d/%m/%Y")  # updated date format
             except ValueError:
-                logging.info(f"Skipping row due to invalid birthdate format: {birthdate}")
+                logging.info(f"Skipping row due to invalid DOB format: {dob}")
                 continue
 
             if bd_date.strftime("%m-%d") == today_str:
                 students.append({
-                    "name": row["name"].strip(),
+                    "name": client_name.strip(),
                     "email": row["email"].strip(),
-                    "birthdate": birthdate.strip()
+                    "birthdate": dob.strip()
                 })
-                logging.info(f"Added student: {row['name'].strip()} with birthday today")
+                logging.info(f"Added student: {client_name.strip()} with birthday today")
         else:
             logging.info(f"Skipping row due to missing data: {row}")
 
@@ -208,7 +211,7 @@ def get_students_from_sheet():
 
 
 
-schedule.every().day.at("10:30").do(lambda: send_birthday_emails(get_students_from_sheet()))
+schedule.every().day.at("16:33").do(lambda: send_birthday_emails(get_students_from_sheet()))
 print("Scheduler Running")
 
 logging.info("📬 Birthday email scheduler started...")
